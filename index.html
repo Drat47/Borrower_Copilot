@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Borrower Copilot · Know Your Fair Loan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500;1,6..72,600&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app">
+
+  <header class="topbar">
+    <a href="#" data-goto="landing" class="brand">
+      Borrower <em>Copilot</em><span class="dot" title="Live Engine Active"></span>
+    </a>
+    <nav class="topnav">
+      <a href="#" data-goto="landing" class="active">Home</a>
+      <a href="Run-throughs.html">Run-throughs</a>
+      <a href="RULES.md">Rules</a>
+    </nav>
+  </header>
+
+  <!-- ══════════════ LANDING ══════════════ -->
+  <section id="screen-landing" class="screen active">
+    <div class="hero">
+      <div class="eyebrow">Self-assessment · 2 minutes</div>
+      <h1>Walk in knowing what a <em>fair</em> loan looks like for you.</h1>
+      <p class="thesis">Four honest answers before you sign anything: <strong>should I borrow, how much can I actually carry, what rate is fair for me, and what EMI should I refuse to cross</strong> — plus a card you can hold up to the lender.</p>
+
+      <div class="four">
+        <div><b>⚖️ O1 · Verdict</b>Borrow, borrow less, or don't.</div>
+        <div><b>💰 O2 · Amount</b>Lender max vs. what you can carry safely.</div>
+        <div><b>📈 O3 · Rate</b>Fair rate band + all-in APR calculations.</div>
+        <div><b>🛡️ O4 · EMI</b>Monthly ceiling + real-world stress test.</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span>👥</span> Try it with one of these borrowers</h3>
+      <p style="font-size:.92rem;color:var(--text-muted);max-width:36rem;margin-bottom:0.75rem">These are the three profiles from the brief. Click one to see the full flow pre-answered and jump straight to the live outputs.</p>
+      <div class="persona-grid" id="landing-personas"></div>
+    </div>
+
+    <div class="section">
+      <h3><span>✨</span> Or answer for yourself</h3>
+      <p style="font-size:.92rem;color:var(--text-muted);max-width:36rem;margin-bottom:1.25rem">About 8–10 core questions, then a few more if they'll tighten your numbers. Skip anything — the ranges just widen safely.</p>
+      <button class="btn primary" data-goto="start">Start blank <span class="arrow">→</span></button>
+    </div>
+
+    <p class="footnote">🔒 No login. No bureau pull. No data leaves your device.</p>
+  </section>
+
+  <!-- ══════════════ QUESTION ══════════════ -->
+  <section id="screen-question" class="screen">
+    <div class="qhead">
+      <span class="qcount" id="q-count">1</span>
+      <div class="progress"><div class="fill" id="q-progress-fill" style="width:0%"></div></div>
+      <a href="#" class="skiplink" id="nav-restart">Restart</a>
+    </div>
+
+    <div class="qcard">
+      <h1 class="qlabel" id="q-label">Question</h1>
+      <p class="qhelp" id="q-help"></p>
+      <span class="qtightens" id="q-tightens"></span>
+      <div class="field" id="q-field"></div>
+    </div>
+
+    <div class="qactions">
+      <div class="left">
+        <button class="btn ghost" id="q-back">← Back</button>
+        <button class="skiplink" id="q-skip">Skip</button>
+      </div>
+      <button class="btn primary" id="q-next">Continue <span class="arrow">→</span></button>
+    </div>
+
+    <p class="footnote" style="margin-top:2rem">Press <kbd>Enter</kbd> to continue. Every answer narrows a range or unlocks follow-ups — nothing is asked for its own sake.</p>
+  </section>
+
+  <!-- ══════════════ RESULTS ══════════════ -->
+  <section id="screen-results" class="screen">
+    <div class="qhead" style="margin-bottom:0">
+      <span class="qcount">🎯 Your four outputs</span>
+      <div style="flex:1"></div>
+      <a href="#" class="skiplink" id="r-restart">Start over</a>
+    </div>
+
+    <h1 style="margin:1.25rem 0 1.5rem">Here is what a <em>fair</em> deal looks like for you.</h1>
+
+    <div id="r-verdict" class="verdict"></div>
+
+    <div id="r-max" class="output"></div>
+    <div id="r-rate" class="output"></div>
+    <div id="r-emi" class="output"></div>
+
+    <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:2rem;justify-content:space-between">
+      <button class="btn ghost" id="r-more-qs">Answer a few more to tighten →</button>
+      <button class="btn primary" id="r-to-card">See Negotiation Card <span class="arrow">→</span></button>
+    </div>
+
+    <details id="r-trace" class="trace"></details>
+  </section>
+
+  <!-- ══════════════ NEGOTIATION CARD ══════════════ -->
+  <section id="screen-card" class="screen">
+    <div class="qhead" style="margin-bottom:.5rem">
+      <span class="qcount">📄 Negotiation Card</span>
+      <div style="flex:1"></div>
+      <a href="#" class="skiplink" id="card-back">← Back to results</a>
+    </div>
+    <p style="color:var(--text-muted);font-size:.92rem;max-width:36rem">Hand this to the lender. Every line ties back to an answer you gave. If they push back, ask them to justify their number against yours.</p>
+
+    <div class="card-wrap">
+      <div class="negcard" id="negcard"></div>
+    </div>
+
+    <div class="card-actions">
+      <button class="btn ghost" id="card-back-btn">← Back to Results</button>
+      <button class="btn primary" id="card-print">Print / Save as PDF 🖨️</button>
+    </div>
+
+    <p class="footnote">The card prints as a clean single page. Every rule that produced it is traceable and documented in RULES.md.</p>
+  </section>
+
+</div>
+
+<script src="rules.js?v=4"></script>
+<script src="questions.js?v=4"></script>
+<script src="app.js?v=4"></script>
+</body>
+</html>

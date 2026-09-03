@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Run-throughs · Borrower Copilot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500;1,6..72,600&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .app{max-width:84rem}
+  .rt-head{border-bottom:1px solid var(--border-light);padding-bottom:2rem;margin-bottom:2.5rem}
+  .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2rem;margin:0}
+  @media (max-width:1050px){.grid{grid-template-columns:1fr}}
+  .col{
+    background:var(--bg-surface);
+    border-radius:var(--r-xl);
+    border:1px solid var(--border-light);
+    padding:1.75rem 1.6rem;
+    box-shadow:var(--shadow-card);
+    display:flex;
+    flex-direction:column;
+    position:relative;
+    overflow:hidden;
+    transition:transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .col:hover{
+    transform:translateY(-3px);
+    box-shadow:var(--shadow-lg);
+  }
+  .col::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:5px;
+    background:var(--brand-gradient);
+  }
+  .col h2{font-family:var(--display);font-size:1.6rem;margin:0 0 .25rem;color:var(--text-primary)}
+  .col .meta{font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;color:var(--brand-purple);font-weight:700;margin-bottom:.75rem}
+  .col .stated{background:var(--bg-subtle);padding:.85rem 1rem;border-radius:var(--r-md);font-size:.9rem;margin-bottom:1.5rem;line-height:1.5;color:var(--text-secondary);border:1px solid var(--border-light)}
+  .col .stated b{color:var(--text-primary);font-weight:600}
+  .qlist{list-style:none;padding:0;margin:0 0 1.5rem;font-size:.88rem}
+  .qlist li{padding:.5rem 0;border-top:1px solid var(--border-light);display:grid;grid-template-columns:1fr auto;gap:.75rem;align-items:baseline}
+  .qlist li:first-child{border-top:0}
+  .qlist .q{color:var(--text-secondary);line-height:1.35}
+  .qlist .a{font-family:var(--mono);color:var(--brand-purple);text-align:right;font-size:.85rem;font-weight:600}
+  .qlist .a.skip{color:var(--text-muted);font-style:italic;font-weight:400}
+  .outs{margin-top:1rem;font-size:.92rem;display:flex;flex-direction:column;gap:.75rem}
+  .out{padding:.9rem 1.1rem;background:var(--bg-subtle);border-radius:var(--r-md);border:1px solid var(--border-light);border-left:4px solid var(--brand-purple)}
+  .out.dont{border-left-color:var(--danger);background:var(--danger-bg);border-color:var(--danger-border)}
+  .out.less{border-left-color:var(--warning);background:var(--warning-bg);border-color:var(--warning-border)}
+  .out.go{border-left-color:var(--success);background:var(--success-bg);border-color:var(--success-border)}
+  .out .lbl{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.3rem;font-weight:700}
+  .out .hd{font-family:var(--display);font-size:1.25rem;font-weight:600;margin-bottom:.25rem}
+  .out.go .hd{color:var(--success-text)}
+  .out.less .hd{color:var(--warning-text)}
+  .out.dont .hd{color:var(--danger-text)}
+  .out .num{font-family:var(--mono);font-size:1.15rem;color:var(--text-primary);font-weight:700;display:inline}
+  .out p{font-size:.88rem;margin:.4rem 0 0;line-height:1.45;color:var(--text-secondary)}
+  .card-mini{background:var(--bg-surface);border:1.5px solid var(--border-light);border-radius:var(--r-lg);padding:1.15rem 1.25rem;margin-top:1.5rem;box-shadow:var(--shadow-sm)}
+  .card-mini h3{font-family:var(--display);font-size:1.1rem;font-weight:600;letter-spacing:0;text-transform:none;color:var(--text-primary);margin:0 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid var(--border-light)}
+  .card-mini .row{display:grid;grid-template-columns:6rem 1fr;gap:.5rem;font-size:.82rem;padding:.4rem 0;border-top:1px solid var(--border-light)}
+  .card-mini .row:first-of-type{border-top:0}
+  .card-mini .row .k{color:var(--text-muted);letter-spacing:.06em;text-transform:uppercase;font-size:.7rem;font-weight:700;align-self:center}
+  .card-mini .row .v{font-family:var(--mono);color:var(--text-primary)}
+  .card-mini .row .v b{color:var(--brand-primary);font-weight:700}
+  .diff{font-family:var(--mono);font-size:.8rem;color:var(--text-muted);margin-top:1rem;padding-top:.75rem;border-top:1px dashed var(--border-light);line-height:1.4}
+  .diff b{color:var(--brand-purple);font-weight:600}
+  .keytake{background:linear-gradient(135deg, rgba(245, 243, 255, 0.9) 0%, rgba(238, 242, 255, 0.9) 100%);border-radius:var(--r-lg);border:1px solid rgba(124, 58, 237, 0.25);border-left:5px solid var(--brand-purple);padding:1.25rem 1.5rem;margin:2.5rem 0 1.5rem;font-family:var(--display);font-size:1.15rem;line-height:1.5;box-shadow:var(--shadow-md)}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <a href="index.html" class="brand">Borrower <em>Copilot</em><span class="dot"></span></a>
+    <nav class="topnav">
+      <a href="index.html">Home</a>
+      <a href="Run-throughs.html" class="active">Run-throughs</a>
+      <a href="RULES.md">Rules</a>
+    </nav>
+  </header>
+
+  <div class="rt-head">
+    <div class="eyebrow">Deliverable 3 · Three run-throughs</div>
+    <h1>Priya, Ravi, Anita — <em>side by side</em>.</h1>
+    <p style="max-width:48rem;color:var(--text-secondary);font-size:1.1rem;line-height:1.55;margin-top:0.75rem">Everything below is what the live <span class="mono" style="color:var(--brand-purple);font-weight:600">BC.compute()</span> engine returns for each persona — not a static summary. Different profiles see different questions, get routed to different products, and land on different verdicts.</p>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="keytake">
+    <b style="color:var(--brand-primary)">What the three cases prove:</b> <strong>Priya</strong> — the borrower's number and the lender's number are correctly different (₹13.1L vs ₹23.75L); the app tells her to use hers. <strong>Ravi</strong> — the app routes him to LAP at ~10% instead of an unsecured business loan at ~20%, and reveals that the ITR cap, not FOIR, is what actually binds him. <strong>Anita</strong> — "Don't borrow" fires, with the diagnostic reason (debt-trap pattern) <em>and</em> a constructive alternative (platform lease). Same rules, three very different answers.
+  </div>
+
+  <p class="footnote" style="margin-top:2rem">Open <a href="index.html">the app</a> and click any persona to walk through the interactive flow. Every number here matches what the app shows on the results screen.</p>
+</div>
+
+<script src="rules.js?v=4"></script>
+<script src="questions.js?v=4"></script>
+<script>
+const PERSONAS = {
+  priya: {
+    label: "Priya, 29", where: "Bengaluru · salaried",
+    stated: "Software engineer at a large MNC for 5 years. Net <b>₹1,10,000</b>/month. One car loan, EMI <b>₹14,000</b>, 2 years left. Credit score 780. Rents at ₹28,000. Wants <b>₹8,00,000</b> personal loan for a wedding.",
+    answered: {
+      purpose: "wedding", amount: 800000,
+      incomeType: "salaried", income: 110000,
+      existingEmi: 14000, expenses: 28000, age: 29,
+      scoreState: "known", score: 780,
+      employerTier: "mnc_large", tenureYears: 5,
+      utilization: 0.25, bouncesLast12: 0, emergencyMonths: 6,
+      existingHighCostLoans: false, hasCollateral: false,
+      coApplicantIncome: 0, dependents: 0, productive: false,
+      incomeVariabilityPct: 0,
+    },
+  },
+  ravi: {
+    label: "Ravi, 42", where: "Mysuru · self-employed",
+    stated: "Kirana store for 14 years. Cash income <b>₹40,000–80,000</b>/month; ITR shows <b>₹4,20,000</b>/year. Owns shop premises worth ₹45L, unencumbered. Never taken a formal loan; no credit score. Wife earns <b>₹18,000</b> teaching. Wants <b>₹15,00,000</b> for stock and a delivery vehicle.",
+    answered: {
+      purpose: "business", amount: 1500000,
+      incomeType: "se_itr", income: 60000, itrAnnual: 420000, itrYears: 8,
+      existingEmi: 0, expenses: 35000, age: 42,
+      scoreState: "no_score",
+      incomeVariabilityPct: 0.35,
+      bouncesLast12: 0, emergencyMonths: 4,
+      existingHighCostLoans: false,
+      hasCollateral: true, collateralValue: 4500000,
+      coApplicantIncome: 18000, dependents: 2, soleEarner: false,
+      productive: true, expectedExtraIncome: 15000,
+    },
+  },
+  anita: {
+    label: "Anita, 35", where: "Hubballi · informal",
+    stated: "Delivery-platform rider plus home tailoring. <b>₹26,000–30,000</b>/month, two children, husband unemployed 8 months. Three app loans, <b>₹35,000</b> outstanding at 30%+, one EMI bounced last month. Wants <b>₹1,50,000</b> electric scooter to double delivery runs.",
+    answered: {
+      purpose: "vehicle_2w", amount: 150000,
+      incomeType: "informal", income: 28000,
+      existingEmi: 4500, expenses: 22000, age: 35,
+      scoreState: "unknown",
+      incomeVariabilityPct: 0.4,
+      bouncesLast12: 1, emergencyMonths: 0,
+      existingHighCostLoans: true,
+      hasCollateral: false, coApplicantIncome: 0,
+      dependents: 3, soleEarner: true,
+      productive: true, expectedExtraIncome: 6000,
+    },
+  },
+};
+
+function fmtA(v, kind){
+  if (v == null || v === "") return { txt: "skipped", cls: "skip" };
+  if (kind === "inr") return { txt: BC.inr(v), cls: "" };
+  if (kind === "pct") return { txt: (typeof v === "number" && v <= 1 ? Math.round(v*100) : v) + "%", cls: "" };
+  if (kind === "bool") return { txt: v ? "Yes" : "No", cls: "" };
+  if (kind === "choice") {
+    const q = BC_Q.QUESTIONS.find(qq => qq.options && qq.options.some(o => o.v === v));
+    const opt = q && q.options.find(o => o.v === v);
+    return { txt: opt ? opt.l : String(v), cls: "" };
+  }
+  return { txt: String(v), cls: "" };
+}
+
+function render() {
+  const grid = document.getElementById("grid");
+  grid.innerHTML = Object.entries(PERSONAS).map(([key, p]) => {
+    // Mark all applicable questions as "answered" for coverage
+    const answered = new Set();
+    Object.keys(p.answered).forEach(k => answered.add(k));
+    // Compute
+    const state = { ...p.answered };
+    let w = 0;
+    BC_Q.QUESTIONS.forEach(q => {
+      if (answered.has(q.id)) w += (q.weight || 0);
+    });
+    state._answeredWeight = w;
+    const r = BC.compute(state);
+
+    // Which questions were asked (askIf filter)
+    const asked = BC_Q.QUESTIONS.filter(q => !q.askIf || q.askIf(state));
+
+    const qsHtml = asked.map(q => {
+      const val = p.answered[q.id];
+      const {txt, cls} = fmtA(val, q.kind);
+      return `<li><span class="q">${q.label}</span><span class="a ${cls}">${txt}</span></li>`;
+    }).join("");
+
+    const midRate = (r.rateBand[0] + r.rateBand[1]) / 2;
+    const askAmt = Math.min(p.answered.amount, r.safeSanction);
+    const emiAtSafe = BC.emiOf(askAmt, midRate, r.preferredTenure);
+
+    // Negotiation card mini
+    const cardHtml = `
+      <div class="card-mini">
+        <h3>Negotiation Card (summary)</h3>
+        <div class="row"><div class="k">Product</div><div class="v"><b>${r.productLabel}</b></div></div>
+        <div class="row"><div class="k">Amount</div><div class="v"><b>${BC.inr(askAmt)}</b>${p.answered.amount > askAmt ? ` <span style="color:var(--text-muted)">(asked ${BC.inr(p.answered.amount)})</span>` : ""}</div></div>
+        <div class="row"><div class="k">Rate</div><div class="v"><b>${r.rateBand[0]}–${r.rateBand[1]}%</b> · APR ~${r.apr}%</div></div>
+        <div class="row"><div class="k">Tenure</div><div class="v"><b>${r.preferredTenure} months</b></div></div>
+        <div class="row"><div class="k">EMI ceiling</div><div class="v"><b>${BC.inr(emiAtSafe)}</b>/mo</div></div>
+        <div class="row"><div class="k">PF cap</div><div class="v">≤ <b>1%</b> (ask waiver)</div></div>
+      </div>
+    `;
+
+    return `
+      <div class="col">
+        <div class="meta">${p.where}</div>
+        <h2>${p.label}</h2>
+        <div class="stated">${p.stated}</div>
+        <h3 style="margin-top:1.25rem">Questions asked of ${p.label.split(",")[0]}</h3>
+        <ul class="qlist">${qsHtml}</ul>
+
+        <h3>Four outputs</h3>
+        <div class="outs">
+          <div class="out ${r.verdict.code}">
+            <div class="lbl">O1 · Verdict</div>
+            <div class="hd">${r.verdict.label}</div>
+            <p>${r.verdict.reasons[0]}</p>
+            ${r.verdict.reasons[1] ? `<p style="color:var(--text-muted)">${r.verdict.reasons[1]}</p>` : ""}
+          </div>
+          <div class="out">
+            <div class="lbl">O2 · Max amount</div>
+            <div>Lender: <span class="num">${BC.inr(r.lenderMaxSanction)}</span></div>
+            <div>Safe: <b><span class="num" style="color:var(--brand-purple)">${BC.inr(r.safeSanction)}</span></b></div>
+            <p style="color:var(--text-muted)">Use the safe number.</p>
+          </div>
+          <div class="out">
+            <div class="lbl">O3 · Fair rate</div>
+            <div><span class="num" style="font-size:1.35rem;color:var(--brand-primary)">${r.rateBand[0]}–${r.rateBand[1]}%</span></div>
+            <p>All-in APR incl. ~${((r.pf[0]+r.pf[1])/2*100).toFixed(1)}% PF: <b>~${r.apr}%</b> over ${r.preferredTenure}mo</p>
+          </div>
+          <div class="out">
+            <div class="lbl">O4 · EMI ceiling</div>
+            <div><b><span class="num">${BC.inr(r.safeEmi)}</span>/mo</b> safe · lender allows ${BC.inr(r.lenderMaxEmi)}</div>
+            <p>Stress test (income −20%, rate +2%): EMI <span class="num">${BC.inr(r.stress.emi)}</span> vs disposable <span class="num">${BC.inr(r.stress.disposable)}</span> → <b style="color:${r.stress.breaches ? 'var(--danger)' : 'var(--success)'}">${r.stress.breaches ? 'BREACHES' : 'holds'}</b></p>
+          </div>
+        </div>
+
+        ${cardHtml}
+
+        <div class="diff">
+          <b>Key rule that fired:</b> ${r.why.find(w => w.tag === "route")?.text || ""}
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+document.addEventListener("DOMContentLoaded", render);
+</script>
+</body>
+</html>
